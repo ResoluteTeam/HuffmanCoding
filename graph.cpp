@@ -33,6 +33,8 @@ std::vector<Vertex> Graph::codding()
 
     node* tempNode;
 
+    int counter = 0;
+
     int i = graph.size()-1;
     while (i >= 0)
     {
@@ -44,6 +46,7 @@ std::vector<Vertex> Graph::codding()
                 tempNode->parent.setCode(graph.at(j).children1.getCode());
             if(tempNode->parent.getName() == graph.at(j).children2.getName())
                 tempNode->parent.setCode(graph.at(j).children2.getCode());
+            counter++;
         }
 
         tempNode->children1.setCode(tempNode->parent.getCode() + "0");

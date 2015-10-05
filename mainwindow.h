@@ -3,6 +3,8 @@
 
 #include <QMainWindow>
 #include <vertex.h>
+#include <QtConcurrent/QtConcurrent>
+#include <calculator.h>
 
 namespace Ui {
 class MainWindow;
@@ -26,7 +28,14 @@ private slots:
 
     void on_pushButton_3_clicked();
 
+    void encodingEnd();
+
+    void progressChanged(int i);
+
+    void on_MainWindow_destroyed();
+
 private:
+    QFutureWatcher<std::vector<Vertex>> watcher;
     Ui::MainWindow *ui;
     void createVertexArray();
     std::vector<Vertex> arrayOfVertexes;

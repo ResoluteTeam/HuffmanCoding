@@ -18,6 +18,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
 MainWindow::~MainWindow()
 {
+    watcher.cancel();
     delete ui;
 }
 
@@ -71,7 +72,7 @@ void MainWindow::on_pushButton_2_clicked()
 {
     std::vector<Vertex> vertexes;
     std::vector<Vertex> tempArray1, tempArray2;
-    std::vector<Vertex> coddedVertexes;
+
     Vertex temp;
 
     int rounds = ui->horizontalSlider->value();
@@ -116,23 +117,15 @@ void MainWindow::on_pushButton_2_clicked()
         vertexes = tempArray2;
     else vertexes = tempArray1;
 
+
     Calculator* calculator = new Calculator(vertexes, ui->statusBar);
     ui->Entropy->setText(QString::number(calculator->entropy()));
-    coddedVertexes = calculator->codding();
 
-    QString text;
-    float lenght = 0;
-    for(int i = 0; i < coddedVertexes.size(); i++)
-            {
-                text += coddedVertexes.at(i).getName() + "(" + QString::number(coddedVertexes.at(i).getValue()) + ")" + " = " + coddedVertexes.at(i).getCode() + "\n";
+    connect(&watcher, SIGNAL(finished()), this, SLOT(encodingEnd()));
+    connect(&watcher, SIGNAL(progressValueChanged(int)), this, SLOT(progressChanged(int)));
+    QFuture<std::vector<Vertex>> future = QtConcurrent::run(calculator, &Calculator::codding);
+    watcher.setFuture(future);
 
-                lenght += coddedVertexes.at(i).getCode().size() * coddedVertexes.at(i).getValue();
-            }
-
-    ui->lenght->setText(QString::number(lenght/coddedVertexes.at(0).getName().size()));
-    ui->textEdit_2->setText(text);
-    ui->Redundancy->setText(QString::number(1-(calculator->entropy()/lenght)));
-    ui->statusBar->showMessage("Number of permutations: " + QString::number(coddedVertexes.size()));
 }
 
 void MainWindow::on_textEdit_selectionChanged()
@@ -185,4 +178,35 @@ void MainWindow::on_pushButton_3_clicked()
                 ui->pushButton_2->setEnabled(true);
         }
     }
+}
+
+void MainWindow::encodingEnd()
+{
+    std::vector<Vertex> coddedVertexes;
+
+    coddedVertexes = watcher.result();
+
+    QString text;
+    float lenght = 0;
+    for(int i = 0; i < coddedVertexes.size(); i++)
+            {
+                text += coddedVertexes.at(i).getName() + "(" + QString::number(coddedVertexes.at(i).getValue()) + ")" + " = " + coddedVertexes.at(i).getCode() + "\n";
+
+                lenght += coddedVertexes.at(i).getCode().size() * coddedVertexes.at(i).getValue();
+            }
+
+    ui->lenght->setText(QString::number(lenght/coddedVertexes.at(0).getName().size()));
+    ui->textEdit_2->setText(text);
+    ui->Redundancy->setText(QString::number(1-(ui->Entropy->text().toFloat()/lenght)));
+    ui->statusBar->showMessage("Number of permutations: " + QString::number(coddedVertexes.size()));
+}
+
+void MainWindow::progressChanged(int i)
+{
+    ui->statusBar->showMessage(QString::number(i));
+}
+
+void MainWindow::on_MainWindow_destroyed()
+{
+    watcher.cancel();
 }
