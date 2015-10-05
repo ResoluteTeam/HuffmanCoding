@@ -1,0 +1,35 @@
+#ifndef MAINWINDOW_H
+#define MAINWINDOW_H
+
+#include <QMainWindow>
+#include <vertex.h>
+
+namespace Ui {
+class MainWindow;
+}
+
+class MainWindow : public QMainWindow
+{
+    Q_OBJECT
+
+public:
+    explicit MainWindow(QWidget *parent = 0);
+    ~MainWindow();
+
+private slots:
+
+    void on_pushButton_2_clicked();
+
+    void on_textEdit_selectionChanged();
+
+    void on_horizontalSlider_sliderMoved(int position);
+
+    void on_pushButton_3_clicked();
+
+private:
+    Ui::MainWindow *ui;
+    void createVertexArray();
+    std::vector<Vertex> arrayOfVertexes;
+};
+
+#endif // MAINWINDOW_H
