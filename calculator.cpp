@@ -1,9 +1,10 @@
 #include "calculator.h"
 
 
-Calculator::Calculator(std::vector<Vertex> array, QStatusBar *sbar)
+Calculator::Calculator(std::vector<Vertex> array, QWidget *mainWidget)
 {
     arrayOfVertexes = array;
+    widget = mainWidget;
 }
 
 float Calculator::entropy()
@@ -22,7 +23,7 @@ float Calculator::entropy()
 std::vector<Vertex> Calculator::codding()
 {
 
-    Graph graph(arrayOfVertexes, bar);
+    Graph graph(arrayOfVertexes, widget);
     graph.createTree();
 
     return graph.codding();

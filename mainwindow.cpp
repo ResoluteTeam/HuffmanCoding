@@ -70,6 +70,7 @@ void MainWindow::createVertexArray()
 
 void MainWindow::on_pushButton_2_clicked()
 {
+    createVertexArray();
     std::vector<Vertex> vertexes;
     std::vector<Vertex> tempArray1, tempArray2;
 
@@ -118,14 +119,15 @@ void MainWindow::on_pushButton_2_clicked()
     else vertexes = tempArray1;
 
 
-    Calculator* calculator = new Calculator(vertexes, ui->statusBar);
+    Calculator* calculator = new Calculator(vertexes, ui->centralWidget);
     ui->Entropy->setText(QString::number(calculator->entropy()));
 
-    connect(&watcher, SIGNAL(finished()), this, SLOT(encodingEnd()));
-    connect(&watcher, SIGNAL(progressValueChanged(int)), this, SLOT(progressChanged(int)));
-    QFuture<std::vector<Vertex>> future = QtConcurrent::run(calculator, &Calculator::codding);
-    watcher.setFuture(future);
-
+//    connect(&watcher, SIGNAL(finished()), this, SLOT(encodingEnd()));
+//    connect(&watcher, SIGNAL(progressValueChanged(int)), this, SLOT(progressChanged(int)));
+//    QFuture<std::vector<Vertex>> future = QtConcurrent::run(calculator, &Calculator::codding);
+//    watcher.setFuture(future);
+    arrayOfVertexes = calculator->codding();
+    encodingEnd();
 }
 
 void MainWindow::on_textEdit_selectionChanged()
@@ -184,7 +186,7 @@ void MainWindow::encodingEnd()
 {
     std::vector<Vertex> coddedVertexes;
 
-    coddedVertexes = watcher.result();
+    coddedVertexes = arrayOfVertexes;/* watcher.result();*/
 
     QString text;
     float lenght = 0;

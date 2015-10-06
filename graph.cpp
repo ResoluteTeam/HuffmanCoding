@@ -1,18 +1,25 @@
 #include "graph.h"
 #include "qdebug.h"
 
-Graph::Graph(std::vector<Vertex> array, QStatusBar *sbar)
+Graph::Graph(std::vector<Vertex> array, QWidget *mWidget)
 {
     rootVertexes = array;
-    bar = sbar;
+    widget = mWidget;
+    numOfResults = array.size();
 }
 
 void Graph::createTree()
 {
     Vertex temp1, temp2;
     node tempNode;
+
+    QProgressDialog progress("Creating tree...", "Abort", 0, rootVertexes.size() - 1, widget);
+    progress.setWindowModality(Qt::WindowModal);
+    int n = 0;
     while(rootVertexes.size() != 1)
         {
+        if(progress.wasCanceled())
+            break;
         temp1 = findSmallest();
         temp2 = findSmallest();
 
@@ -24,7 +31,9 @@ void Graph::createTree()
 
         graph.push_back(tempNode);
         rootVertexes.push_back(tempNode.parent);
-    }
+        n++;
+        progress.setValue(n);
+        }
 }
 
 std::vector<Vertex> Graph::codding()
@@ -33,11 +42,15 @@ std::vector<Vertex> Graph::codding()
 
     node* tempNode;
 
-    int counter = 0;
-
     int i = graph.size()-1;
+    QProgressDialog progress("Encoding...", "Abort", 0, numOfResults, widget);
+    progress.setWindowModality(Qt::WindowModal);
+
     while (i >= 0)
     {
+        if(progress.wasCanceled())
+            break;
+
         tempNode = &graph.at(i);
 
         for(int j = 0; j < graph.size(); j++)
@@ -46,7 +59,7 @@ std::vector<Vertex> Graph::codding()
                 tempNode->parent.setCode(graph.at(j).children1.getCode());
             if(tempNode->parent.getName() == graph.at(j).children2.getName())
                 tempNode->parent.setCode(graph.at(j).children2.getCode());
-            counter++;
+
         }
 
         tempNode->children1.setCode(tempNode->parent.getCode() + "0");
@@ -61,6 +74,7 @@ std::vector<Vertex> Graph::codding()
         {
             rootVertexes.push_back(tempNode->children2);
         }
+        progress.setValue(rootVertexes.size());
             i--;
     }
 

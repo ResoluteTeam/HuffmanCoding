@@ -3,11 +3,12 @@
 
 #include "vertex.h"
 #include "qstatusbar.h"
+#include "qprogressdialog.h"
 
 class Graph
 {
 public:
-    Graph(std::vector<Vertex> array, QStatusBar* sbar);
+    Graph(std::vector<Vertex> array, QWidget* mWidget);
     void createTree();
     std::vector<Vertex> codding();
     Vertex findSmallest();
@@ -19,7 +20,9 @@ private:
         Vertex children1, children2;
     };
 
-    QStatusBar* bar;
+    int numOfResults;
+
+    QWidget* widget;
     std::vector<Vertex> rootVertexes;
     std::vector<Vertex> vertexes;
     std::vector<node> graph;

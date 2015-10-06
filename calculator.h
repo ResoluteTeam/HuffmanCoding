@@ -15,12 +15,12 @@
 class Calculator
 {
 public:
-    Calculator(std::vector<Vertex> array, QStatusBar* sbar);
+    Calculator(std::vector<Vertex> array, QWidget* mainWidget);
     float entropy();
     std::vector<Vertex> codding();
 private:
     std::vector<Vertex> arrayOfVertexes;
-    QStatusBar* bar;
+    QWidget* widget;
 
 };
 
