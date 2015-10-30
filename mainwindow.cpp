@@ -120,7 +120,12 @@ void MainWindow::on_pushButton_2_clicked()
 
 
     Calculator* calculator = new Calculator(vertexes, ui->centralWidget);
-    ui->Entropy->setText(QString::number(calculator->entropy()));
+    if(!calculateEntropy)
+    {
+        ui->Entropy->setText(QString::number(calculator->entropy()));
+        entropy = calculator->entropy();
+        calculateEntropy = true;
+    }
 
 //    connect(&watcher, SIGNAL(finished()), this, SLOT(encodingEnd()));
 //    connect(&watcher, SIGNAL(progressValueChanged(int)), this, SLOT(progressChanged(int)));
@@ -180,6 +185,7 @@ void MainWindow::on_pushButton_3_clicked()
                 ui->pushButton_2->setEnabled(true);
         }
     }
+    on_pushButton_2_clicked();
 }
 
 void MainWindow::encodingEnd()
@@ -198,8 +204,9 @@ void MainWindow::encodingEnd()
             }
 
     ui->lenght->setText(QString::number(lenght/coddedVertexes.at(0).getName().size()));
+    lenght = lenght/coddedVertexes.at(0).getName().size();
     ui->textEdit_2->setText(text);
-    ui->Redundancy->setText(QString::number(1-(ui->Entropy->text().toFloat()/lenght)));
+    ui->Redundancy->setText(QString::number(1-(entropy/lenght)));
     ui->statusBar->showMessage("Number of permutations: " + QString::number(coddedVertexes.size()));
 }
 

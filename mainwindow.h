@@ -35,6 +35,9 @@ private slots:
     void on_MainWindow_destroyed();
 
 private:
+
+    float entropy;
+    bool calculateEntropy = false;
     QFutureWatcher<std::vector<Vertex>> watcher;
     Ui::MainWindow *ui;
     void createVertexArray();
